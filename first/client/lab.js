@@ -11,38 +11,44 @@ function output(input) {
 }
 
 
-function compute(N, qNum) {
-    var primeNumbers = [1, 3, 5, 7, 11, 13, 17, 19, 23, 29];
+function compute(N) {
 
-    function createQ(N, qNum) {
-        var res = [];
-        for (var i = 1; i < (N + 1) / 2; i++) {
-            if (primeNumbers.indexOf(i) !== -1 && res.length < qNum)
-                res.push(i);
-        }
-        return res;
-    }
-
-    function createCirtulate(N, q) {
+    function createStructure(N) {
         var paths = {};
-        
-        for (var i = 0; i < N; i++) {
-            paths[i] = {};
-            q.forEach(function (base) {
-                paths[i][(i + base) % N] = 1;
 
-                if (i - base < 0)
-                    paths[i][(i - base) % N + N] = 1;
-                else
-                    paths[i][(i - base) % N] = 1;
-            });
+        if (N == 9) {
+            paths = {
+                0: {1: 1, 3: 1, 6: 1, 2: 1},
+                1: {0: 1, 2: 1, 4: 1, 7: 1},
+                2: {0: 1, 1: 1, 5: 1, 8: 1},
+                3: {0: 1, 4: 1, 5: 1, 6: 1},
+                4: {1: 1, 3: 1, 7: 1, 5: 1},
+                5: {2: 1, 4: 1, 8: 1, 3: 1},
+                6: {8: 1, 0: 1, 7: 1, 3: 1},
+                7: {1: 1, 4: 1, 6: 1, 8: 1},
+                8: {2: 1, 6: 1, 5: 1, 7: 1}
+            };
+        } else if (N == 12) {
+            paths = {
+                0:  {2: 1, 1: 1, 5: 1, 11: 1},
+                1:  {4: 1, 0: 1, 2: 1, 10: 1},
+                2:  {0: 1, 1: 1, 3: 1, 9: 1},
+                3:  {2: 1, 4: 1, 5: 1, 8: 1},
+                4:  {3: 1, 1: 1, 5: 1, 7: 1},
+                5:  {0: 1, 4: 1, 6: 1, 3: 1},
+                6:  {8: 1, 5: 1, 11: 1, 7: 1},
+                7:  {10: 1, 4: 1, 6: 1, 8: 1},
+                8:  {3: 1, 9: 1, 7: 1, 6: 1},
+                9:  {2: 1, 11: 1, 10: 1, 8: 1},
+                10: {1: 1, 11: 1, 9: 1, 7: 1},
+                11: {0: 1, 9: 1, 10: 1, 6: 1},
+            };
         }
 
         return paths;
     }
 
-    var q = createQ(N, qNum);
-    var circ = createCirtulate(N, q);
+    var circ = createStructure(N);
     var graph = new Graph(circ);
     var maxDiameter = 0;
 
@@ -77,7 +83,7 @@ function compute(N, qNum) {
     });
     var avgDiameter = sum / N;
 
-    var result = 'N: ' + N + '; q: ' + qNum + '<br>';
+    var result = 'N: ' + N + '; <br>';
     result += 'Max Diameter: ' + maxDiameter + '<br>';
     result += 'Average Diameter: ' + avgDiameter;
 
@@ -86,12 +92,8 @@ function compute(N, qNum) {
 
 
 $(function () {
-    var N = [7, 14, 24];
-    var q = [3, 4, 4];
-
-    for (var i = 0; i < N.length; i++) {
-        compute(N[i], q[i]);
-    }
+    compute(9);
+    compute(12);
 });
 
 
