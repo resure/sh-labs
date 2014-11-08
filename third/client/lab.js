@@ -14,27 +14,30 @@ function copy(input) {
     return JSON.parse(JSON.stringify(input));
 }
 
-function printMatr(input) {
-    var result = '    ',
+function printMatr(input, title) {
+    var result = '<h3 class="title">' + title + '</h3>      ',
         N = input.length;
 
     for (var i = 1; i <= N; i++) {
         result += '<span style="color:#999;display:inline-block;transform:rotate(-45deg);padding-bottom:4px">' + i + '</span> ';
         if (i < 10) {
-            result += ' ';
+            result += '  ';
         }
     }
 
     result += '<br>'
 
     input.forEach(function (row, i) {
-        result += '<span style="color:#999">' + (i+1) + '</span>  ';
+        result += '<span style="color:#999">' + (i+1) + '</span>   ';
         if (i < 9) {
-            result += ' ';
+            result += '  ';
         }
         row.forEach(function (el) {
-            result += el + ' ';
-            if (el < 10 || el == 'T' || el == 'F') {
+            result += el + '   ';
+            if (el < 10) {
+                result += '    ';
+            } 
+            if (el.length == 2) {
                 result += ' ';
             }
         });
@@ -44,9 +47,41 @@ function printMatr(input) {
     output(result);
 }
 
+function logicSum(a,b) {
+    if (a == 0 || a == 1) {
+        return b;
+    }
+    if (b == 0 || b == 1) { 
+        return a;
+    }
+
+    return (a + b);
+}
+
+function logicMultiplication(a,b) {
+    if (a == 0 || b == 0) {
+        return 0;
+    }
+    if (a == 1) { 
+        return b;
+    }
+    if (b == 1) {
+        return a;
+    }
+
+    return (a + b);
+}
 
 function compute(tree) {
+
+    /*
+
+    Расчет матрицы следования
+
+    */
+
     var N = Object.keys(tree).length;
+    
     var matr = [];
 
     for (var i = 1; i <= N; i++) {
@@ -57,7 +92,7 @@ function compute(tree) {
         for (var j = 0; j < N; j++) {
             if (current[j + 1]) {
                 if (current.condition) {
-                    row[j] = conditionState ? 'T' : 'F';
+                    row[j] = conditionState ? (i + 'T') : (i + 'F');
                     conditionState = false;
                 } else {
                     row[j] = 1;
@@ -70,17 +105,48 @@ function compute(tree) {
         matr.push(row);
     }
 
+    printMatr(matr, "Матрица следования: ");
+
+    /*
+
+    Расчет матрицы следования с указанием весов
+
+    */
+
     var values = [];
     for (var i = 1; i <= N; i++) {
         values.push(tree[i].value);
     }
     matr.push(values);
+    
+    // Траспонирование матрицы
     matr = _.zip.apply(_, matr);
     
+    printMatr(matr, "Матрица следования с указанием весов: ");
 
+    /* 
+
+    Расчет матрицы следования с указанием транзитивных связей
     
+    */
 
-    printMatr(matr);
+    // Извлечение последнего столбца(столбца с весами элементов)
+    matr = _.zip.apply(_, matr);
+    matr.pop();  
+    matr = _.zip.apply(_, matr);
+
+    for (var i = 0; i < N; i++) {
+        for (var j = 0; j < N; j++) {
+            if (matr[i][j] != 0) {
+                for (k = 0; k < j; k++) {
+                    matr[i][k] = logicSum(logicMultiplication(matr[j][k], matr[i][j]), matr[i][k]);
+                }
+            }
+        }
+    }
+
+    printMatr(matr, "Матрица следования с транзитивными связями: ");
+
 }
 
 
@@ -176,18 +242,3 @@ $(function () {
     compute(tree);
 
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
