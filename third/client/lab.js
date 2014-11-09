@@ -15,11 +15,11 @@ function copy(input) {
 }
 
 function printMatr(input, title) {
-    var result = '<h3 class="title">' + title + '</h3>      ',
+    var result = '<h3 class="title">' + title + '</h3>       ',
         N = input.length;
 
     for (var i = 1; i <= N; i++) {
-        result += '<span style="color:#999;display:inline-block;transform:rotate(-45deg);padding-bottom:4px">' + i + '</span> ';
+        result += '<span style="color:#999;display:inline-block;transform:rotate(-45deg);padding-bottom:4px">' + i + '</span>          ';
         if (i < 10) {
             result += '  ';
         }
@@ -35,10 +35,13 @@ function printMatr(input, title) {
         row.forEach(function (el) {
             result += el + '   ';
             if (el < 10) {
-                result += '    ';
+                result += '         ';
             } 
             if (el.length == 2) {
-                result += ' ';
+                result += '       ';
+            }
+            if (el.length == 3) {
+                result += '      ';
             }
         });
         result += '<br>';
@@ -105,8 +108,11 @@ function compute(tree) {
         matr.push(row);
     }
 
+    matr = _.zip.apply(_, matr);
+
     printMatr(matr, "Матрица следования: ");
 
+    matr = _.zip.apply(_, matr);
     /*
 
     Расчет матрицы следования с указанием весов
